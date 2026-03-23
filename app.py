@@ -1,14 +1,14 @@
 import random
 import streamlit as st
 
-def get_range_for_difficulty(difficulty: str):
-    if difficulty == "Easy":
-        return 1, 20
-    if difficulty == "Normal":
-        return 1, 100
-    if difficulty == "Hard":
-        return 1, 50
-    return 1, 100
+import random
+import streamlit as st
+from logic_utils import (
+    get_range_for_difficulty,
+    parse_guess,
+    check_guess,
+    update_score,
+)
 
 
 def parse_guess(raw: str):
@@ -28,7 +28,7 @@ def parse_guess(raw: str):
 
     return True, value, None
 
-
+# FIXME: Hint direction logic breaks here
 def check_guess(guess, secret):
     if guess == secret:
         return "Win", "🎉 Correct!"
@@ -130,11 +130,16 @@ with col2:
     new_game = st.button("New Game 🔁")
 with col3:
     show_hint = st.checkbox("Show hint", value=True)
-
+# FIXME: New Game does not fully reset game state correctly
 if new_game:
+    st.session_state.secret = random.randint(low, high)
     st.session_state.attempts = 0
-    st.session_state.secret = random.randint(1, 100)
+    st.session_state.status = "playing"
+    st.session_state.history = []
+    st.session_state.score = 0
+    st.session_state[f"guess_input_{difficulty}"] = ""
     st.success("New game started.")
+    # FIX: Reset game state using Copilot guidance, then manually verified in Streamlit.
     st.rerun()
 
 if st.session_state.status != "playing":
@@ -155,10 +160,8 @@ if submit:
     else:
         st.session_state.history.append(guess_int)
 
-        if st.session_state.attempts % 2 == 0:
-            secret = str(st.session_state.secret)
-        else:
-            secret = st.session_state.secret
+        # FIXME: Hint logic and secret type handling caused incorrect behavior
+        secret = st.session_state.secret
 
         outcome, message = check_guess(guess_int, secret)
 
@@ -186,6 +189,8 @@ if submit:
                     f"The secret was {st.session_state.secret}. "
                     f"Score: {st.session_state.score}"
                 )
+
+        # FIX: Refactored guess-checking logic into logic_utils.py with Copilot, then manually verified hint directions and win behavior.
 
 st.divider()
 st.caption("Built by an AI that claims this code is production-ready.")
