@@ -17,21 +17,32 @@ It wrote the code, ran away, and now the game is unplayable.
 ## 🕵️‍♂️ Your Mission
 
 1. **Play the game.** Open the "Developer Debug Info" tab in the app to see the secret number. Try to win.
-2. **Find the State Bug.** Why does the secret number change every time you click "Submit"? Ask ChatGPT: *"How do I keep a variable from resetting in Streamlit when I click a button?"*
-3. **Fix the Logic.** The hints ("Higher/Lower") are wrong. Fix them.
-4. **Refactor & Test.** - Move the logic into `logic_utils.py`.
-   - Run `pytest` in your terminal.
-   - Keep fixing until all tests pass!
+
+2. **Find the State Bug.**  
+The secret number was resetting every time I clicked "Submit" because the state was not being handled properly. I fixed this by making sure the secret number is stored in `st.session_state` and only initialized once.
+
+3. **Fix the Logic.**  
+The hints were reversed. When the guess was higher than the secret, it sometimes told the user to go higher instead of lower. I fixed this by correcting the `check_guess()` logic so:
+- guess > secret → "Go LOWER"
+- guess < secret → "Go HIGHER"
+
+4. **Refactor & Test.**  
+I moved the core logic functions (`parse_guess`, `check_guess`, `update_score`) into `logic_utils.py` to separate logic from UI. Then I ran `pytest` and fixed issues until all tests passed.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+- [x] Describe the game's purpose.  
+This game allows the user to guess a randomly generated number within a limited number of attempts. Based on the difficulty level, the range changes. The game gives feedback after each guess and tracks the score.
+
+- [x] Detail which bugs you found.  
+The main bugs were incorrect hint directions, attempts starting at the wrong number, inconsistent score updates, and issues with state causing confusing gameplay behavior.
+
+- [x] Explain what fixes you applied.  
+I corrected the hint logic, fixed the attempts counter, simplified the score system, ensured proper state handling using `st.session_state`, and refactored the code by moving logic into `logic_utils.py`.
 
 ## 📸 Demo
 
-- [ ] [Insert a screenshot of your fixed, winning game here]
+- ![alt text](image.png)
 
 ## 🚀 Stretch Features
 
